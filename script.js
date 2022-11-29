@@ -134,8 +134,8 @@ window.addEventListener("load", function () {
         constructor(game)
         {
             super(game);
-            this.width  =   228;    
-            this.height =   169;
+            this.width  =   10;    
+            this.height =   10;
             this.y      =   Math.random()   *   (this.game.height*0.9 - this.height);
         }
     }
@@ -174,17 +174,20 @@ window.addEventListener("load", function () {
 
     class Game {
         constructor(width, height) {
-            this.width  = width;
-            this.height = height;
-            this.player = new Player(this);
-            this.input  = new InputHandler(this);
-            this.ui     = new UI(this);
-            this.ammo = 6;
-            this.maxAmmo = 20;
-            this.ammoTimer  =   0;
-            this.ammoInterval=  15000;
-            this.keys = [];
-            this.enemies = [];
+            this.width          =                  width;
+            this.height         =                 height;
+            this.player         =       new Player(this);
+            this.input          = new InputHandler(this);
+            this.ui             =           new UI(this);
+            this.ammo           =                      6;
+            this.maxAmmo        =                     20;
+            this.ammoTimer      =                      0;
+            this.ammoInterval   =                  15000;
+            this.enemyTimer     =                      0;
+            this.enemyInterval  =                   10000;
+            this.keys           =                     [];
+            this.enemies        =                     [];
+            this.gameOver       =                  false;  
 
         }
 
@@ -199,10 +202,20 @@ window.addEventListener("load", function () {
             {
                 this.ammoTimer+=deltaTime;
             }
-            this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
             this.enemies.forEach(enemy=>{
                 enemy.update();
-            })
+            });
+            this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
+            if(this.enemyTimer>this.enemyInterval && !this.gameOver)
+            {
+                this.addEnemy();
+                this.enemyTimer =   0;
+            }
+            else
+            {
+                this.enemyTimer += deltaTime*0.1;
+            }
+
         }
 
         draw(context) {
