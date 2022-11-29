@@ -103,8 +103,43 @@ window.addEventListener("load", function () {
     }
 
     class Enemy {
+            constructor(game)
+            {
+                this.game               =   game;
+                this.x                  =   this.game.width;
+                this.speedX             =   Math.random() * -1.5 - 0.5;
+                this.markedForDeletion  =   false;
 
+            }
+
+            update()
+            {
+                this.x  +=  this.speedX;
+                
+                if(eval(this.x + this.width) < 0) 
+                {
+                        this.markedForDeletion=true;
+                }
+            }
+
+            draw(context)
+            {
+                context.fillStyle   =   "red";
+                context.fillRect(this.x,this.y,this.width,this.height);
+            }
     }
+
+    class Angler1 extends Enemy
+    {
+        constructor(game)
+        {
+            super(game);
+            this.width  =   228;    
+            this.height =   169;
+            this.y      =   Math.random()   *   (this.game.height*0.9 - this.height);
+        }
+    }
+
 
     class Layer {
 
@@ -149,10 +184,12 @@ window.addEventListener("load", function () {
             this.ammoTimer  =   0;
             this.ammoInterval=  15000;
             this.keys = [];
+            this.enemies = [];
 
         }
 
         update(deltaTime) {
+            this.player.update();
             if(this.ammoTimer>this.ammoInterval)
             {
                 if(this.ammo<this.maxAmmo){this.ammo++;}else{lastTime=0;}
@@ -162,13 +199,25 @@ window.addEventListener("load", function () {
             {
                 this.ammoTimer+=deltaTime;
             }
-            this.player.update();
+            this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
+            this.enemies.forEach(enemy=>{
+                enemy.update();
+            })
         }
 
         draw(context) {
             this.player.draw(context);
             this.ui.draw(context);
+            this.enemies.forEach(enemy=>{
+                enemy.draw(context);
+            })
         }
+
+        addEnemy()
+        {
+            this.enemies.push(new Angler1(this));
+        }
+
     }
 
     const game = new Game(canvas.width, canvas.height);
