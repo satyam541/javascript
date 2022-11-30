@@ -185,6 +185,7 @@ window.addEventListener("load", function () {
             this.ammoInterval   =                  15000;
             this.enemyTimer     =                      0;
             this.enemyInterval  =                   10000;
+            this.maxEnemy       =                     10;
             this.keys           =                     [];
             this.enemies        =                     [];
             this.gameOver       =                  false;  
@@ -206,7 +207,7 @@ window.addEventListener("load", function () {
                 enemy.update();
             });
             this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
-            if(this.enemyTimer>this.enemyInterval && !this.gameOver)
+            if(this.enemyTimer>this.enemyInterval && !this.gameOver && this.enemies.length<=this.maxEnemy)
             {
                 this.addEnemy();
                 this.enemyTimer =   0;
@@ -229,6 +230,11 @@ window.addEventListener("load", function () {
         addEnemy()
         {
             this.enemies.push(new Angler1(this));
+        }
+
+        checkCollision(rect1,rect2)
+        {
+            return (rect1.x < rect2.x + rect2.width);
         }
 
     }
